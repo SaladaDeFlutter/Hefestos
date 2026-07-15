@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: opencode-server
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: OPENCODE_SERVER_PASSWORD
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
