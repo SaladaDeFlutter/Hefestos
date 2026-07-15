@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: opencode-server
+    name: hefestos
     env: docker
     dockerfilePath: ./Dockerfile
     envVars:
