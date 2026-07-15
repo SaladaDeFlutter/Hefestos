@@ -1,0 +1,7 @@
+{
+  "name": "hefestos",
+  "private": true,
+  "scripts": {
+    "start": "sh start.sh"
+  }
+}

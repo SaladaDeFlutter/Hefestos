@@ -4,6 +4,9 @@ RUN apt-get update && apt-get install -y git curl ca-certificates && rm -rf /var
 
 RUN npm install -g opencode-ai@latest
 
+WORKDIR /app
+COPY opencode.json .
+
 EXPOSE 10000
 
-CMD ["sh", "-c", "opencode serve --hostname 0.0.0.0 --port ${PORT:-10000}"]
+CMD ["sh", "-c", "opencode web --hostname 0.0.0.0 --port ${PORT:-10000}"]

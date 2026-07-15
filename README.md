@@ -2,7 +2,7 @@
 
 > Servidor HTTP do [OpenCode](https://opencode.ai) — o coding agent open source, pronto para deploy no Render.
 
-Hefestos é o deus grego da forja e da tecnologia. Este projeto expõe o `opencode serve` como um web service, ideal para usar como backend de bots (Discord, Telegram, etc.) ou integrar programaticamente com o OpenCode via API REST.
+Hefestos é o deus grego da forja e da tecnologia. Este projeto expõe o `opencode web` como um web service, com interface web nativa para interagir com o agente via navegador, além da API REST para bots (Discord, Telegram, etc.).
 
 ## Stack
 
@@ -15,11 +15,8 @@ Hefestos é o deus grego da forja e da tecnologia. Este projeto expõe o `openco
 ### Local
 
 ```bash
-# Iniciar o servidor
-OPENCODE_SERVER_PASSWORD=sua-senha opencode serve --port 4096
-
-# Ou com o script do projeto
-npm start
+# Iniciar o servidor com interface web
+OPENCODE_SERVER_PASSWORD=sua-senha opencode web --port 4096
 ```
 
 ### Docker
@@ -33,9 +30,13 @@ docker run -it --rm \
   hefestos
 ```
 
+## Web UI
+
+Acesse `http://localhost:4096` no navegador para um chat completo com o agente.
+
 ## API
 
-O servidor expõe uma API REST com spec OpenAPI 3.1. Com o servidor rodando, acesse:
+O servidor também expõe a mesma API REST com spec OpenAPI 3.1. Com o servidor rodando, acesse:
 
 ```
 http://localhost:4096/doc
