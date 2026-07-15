@@ -9,4 +9,4 @@ COPY opencode.json .
 
 EXPOSE 10000
 
-CMD ["sh", "-c", "opencode web --hostname 0.0.0.0 --port ${PORT:-10000}"]
+CMD ["sh", "-c", "CI=true BROWSER=none opencode web --hostname 0.0.0.0 --port ${PORT:-10000}"]
