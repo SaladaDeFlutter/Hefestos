@@ -4,11 +4,9 @@ RUN apt-get update && apt-get install -y git curl ca-certificates && rm -rf /var
 
 RUN npm install -g opencode-ai@latest
 
-RUN printf '#!/bin/sh\nexit 0\n' > /usr/local/bin/xdg-open && chmod +x /usr/local/bin/xdg-open
-
 WORKDIR /app
-COPY opencode.json .
+COPY opencode.json index.html proxy.js ./
 
 EXPOSE 10000
 
-CMD ["sh", "-c", "opencode web --hostname 0.0.0.0 --port ${PORT:-10000}"]
+CMD ["sh", "-c", "opencode serve --hostname 0.0.0.0 --port 10001 & sleep 2 && exec node proxy.js"]
