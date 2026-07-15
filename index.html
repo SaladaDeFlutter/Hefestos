@@ -66,18 +66,17 @@
     function showError(msg) { const b = $('error-banner'); b.textContent = msg; b.style.display = msg ? 'block' : 'none'; }
 
     async function api(method, path, body) {
-      try {
-        const opts = { method, headers: {} };
-        if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
-        const res = await fetch(API + path, opts);
-        if (!res.ok) {
-          if (res.status === 204) return null;
-          throw new Error(`${res.status} ${res.statusText}`);
-        }
-        return await res.json();
-      } catch (e) {
-        showError(`Erro: ${e.message}`);
-        throw e;
+      const opts = { method, headers: {} };
+      if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+      const res = await fetch(API + path, opts);
+      if (res.status === 204) return null;
+      const text = await res.text();
+      if (!res.ok) {
+        throw new Error(`${res.status}: ${text || res.statusText}`);
+      }
+      if (!text) return null;
+      try { return JSON.parse(text); } catch (e) {
+        throw new Error(`Resposta inválida: ${text.slice(0, 100)}`);
       }
     }
 
@@ -99,28 +98,32 @@
 
     async function createSession() {
       showError('');
-      const session = await api('POST', '/session', { title: 'Nova conversa' });
-      if (session) {
-        currentSessionId = session.id;
-        knownMessageIds.clear();
-        $('header').textContent = session.title || session.id.slice(0, 8);
-        $('messages').innerHTML = '';
-        $('prompt').disabled = false;
-        $('send-btn').disabled = false;
-        await loadSessions();
-      }
+      try {
+        const session = await api('POST', '/session', { title: 'Nova conversa' });
+        if (session) {
+          currentSessionId = session.id;
+          knownMessageIds.clear();
+          $('header').textContent = session.title || session.id.slice(0, 8);
+          $('messages').innerHTML = '';
+          $('prompt').disabled = false;
+          $('send-btn').disabled = false;
+          await loadSessions();
+        }
+      } catch (e) {}
     }
 
     async function selectSession(id, title) {
       showError('');
-      currentSessionId = id;
-      knownMessageIds.clear();
-      $('header').textContent = title || id.slice(0, 8);
-      $('messages').innerHTML = '<div class="empty-state">Carregando...</div>';
-      $('prompt').disabled = false;
-      $('send-btn').disabled = false;
-      await loadMessages();
-      await loadSessions();
+      try {
+        currentSessionId = id;
+        knownMessageIds.clear();
+        $('header').textContent = title || id.slice(0, 8);
+        $('messages').innerHTML = '<div class="empty-state">Carregando...</div>';
+        $('prompt').disabled = false;
+        $('send-btn').disabled = false;
+        await loadMessages();
+        await loadSessions();
+      } catch (e) {}
     }
 
     async function deleteSession(id) {

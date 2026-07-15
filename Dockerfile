@@ -5,8 +5,9 @@ RUN apt-get update && apt-get install -y git curl ca-certificates && rm -rf /var
 RUN npm install -g opencode-ai@latest
 
 WORKDIR /app
-COPY opencode.json index.html proxy.js ./
+COPY opencode.json index.html proxy.js start-docker.sh ./
+RUN chmod +x start-docker.sh
 
 EXPOSE 10000
 
-CMD ["sh", "-c", "opencode serve --hostname 0.0.0.0 --port 10001 & sleep 2 && exec node proxy.js"]
+CMD ["./start-docker.sh"]

@@ -14,28 +14,35 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const headers = { ...req.headers };
-  delete headers['host'];
-
-  const proxy = http.request({
+  const opts = {
     hostname: OPENCODE.hostname,
     port: OPENCODE.port,
     path: req.url,
     method: req.method,
-    headers,
-  }, (proxyRes) => {
+    headers: { ...req.headers, host: '127.0.0.1:10001' },
+  };
+
+  const proxy = http.request(opts, (proxyRes) => {
     res.writeHead(proxyRes.statusCode, proxyRes.headers);
     proxyRes.pipe(res);
   });
 
   proxy.on('error', (err) => {
-    res.writeHead(502, { 'Content-Type': 'text/plain' });
-    res.end('Bad Gateway: ' + err.message);
+    console.error('Proxy error:', err.message);
+    if (!res.headersSent) {
+      res.writeHead(502, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'OpenCode server unavailable' }));
+    }
   });
 
   req.pipe(proxy);
 });
 
+server.on('error', (err) => {
+  console.error('Server error:', err.message);
+  process.exit(1);
+});
+
 server.listen(PORT, () => {
-  console.log(`Hefestos proxy => http://0.0.0.0:${PORT} (opencode on :${OPENCODE.port})`);
+  console.log(`Hefestos proxy listening on port ${PORT} (opencode on ${OPENCODE.port})`);
 });
