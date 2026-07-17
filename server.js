@@ -26,20 +26,25 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (url.pathname === '/admin/api/configs' && req.method === 'POST') {
-    const body = await readBody(req);
-    const { guild_id, guild_name, provider, model, api_key, discord_token } = JSON.parse(body);
-    const config = await db.upsertConfig(guild_id, guild_name, provider, model, api_key);
-    if (discord_token) {
-      process.env.DISCORD_TOKEN = discord_token;
-      stopAndStartDiscord();
+    try {
+      const body = await readBody(req);
+      const { guild_id, guild_name, provider, model, api_key, discord_token } = JSON.parse(body);
+      const config = await db.upsertConfig(guild_id, guild_name, provider, model, api_key, discord_token);
+      if (discord_token) {
+        discord.restart(guild_id, config).catch(err => console.error('Discord restart error:', err.message));
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(config));
+    } catch (e) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: e.message }));
     }
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(config));
     return;
   }
 
   if (url.pathname.startsWith('/admin/api/configs/') && req.method === 'DELETE') {
     const guildId = url.pathname.split('/').pop();
+    await discord.stop(guildId);
     await db.deleteConfig(guildId);
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ ok: true }));
@@ -86,33 +91,19 @@ function proxyToOpenCode(req, res) {
 }
 
 function readBody(req) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let body = '';
     req.on('data', (chunk) => (body += chunk));
     req.on('end', () => resolve(body));
-    req.on('error', reject);
-  });
-}
-
-function stopAndStartDiscord() {
-  const token = process.env.DISCORD_TOKEN;
-  if (!token) return;
-  discord.stop().then(() => {
-    discord.start(token).catch(err => console.error('Discord start error:', err.message));
-  }).catch(() => {
-    discord.start(token).catch(err => console.error('Discord start error:', err.message));
   });
 }
 
 async function init() {
   await db.migrate();
-  const token = process.env.DISCORD_TOKEN;
-  if (token) {
-    discord.start(token).catch(err => console.error('Discord start error:', err.message));
-  }
+  await discord.loadAll();
 }
 
 server.listen(PORT, () => {
-  console.log(`Hefestos middleware on port ${PORT} (opencode on ${OPENCODE_PORT})`);
+  console.log(`Hefestos on port ${PORT} (opencode on ${OPENCODE_PORT})`);
   init();
 });
