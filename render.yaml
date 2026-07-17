@@ -4,7 +4,11 @@ services:
     env: docker
     dockerfilePath: ./Dockerfile
     envVars:
-      - key: OPENCODE_SERVER_PASSWORD
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DISCORD_TOKEN
         sync: false
       - key: ANTHROPIC_API_KEY
         sync: false

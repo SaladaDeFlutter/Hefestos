@@ -5,8 +5,9 @@ RUN apt-get update && apt-get install -y git curl ca-certificates xdg-utils && r
 RUN npm install -g opencode-ai@latest
 
 WORKDIR /app
-COPY opencode.json proxy.js entrypoint.sh ./
-RUN chmod +x entrypoint.sh
+COPY package.json ./
+RUN npm install
+COPY . .
 
 EXPOSE 10000
 

@@ -1,6 +1,10 @@
 {
   "name": "hefestos",
   "private": true,
+  "dependencies": {
+    "discord.js": "^14.19.3",
+    "pg": "^8.15.5"
+  },
   "scripts": {
     "start": "sh start.sh"
   }

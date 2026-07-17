@@ -17,5 +17,5 @@ for i in $(seq 1 30); do
   sleep 2
 done
 
-echo "Starting proxy..."
-exec node /app/proxy.js
+echo "Starting Hefestos server..."
+exec node server.js
