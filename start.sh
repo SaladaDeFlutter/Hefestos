@@ -5,6 +5,10 @@ if [ -f .env ]; then
   set +a
 fi
 
+echo "[Hefestos] Killing old processes on port 10001..."
+fuser -k 10001/tcp 2>/dev/null || true
+sleep 1
+
 echo "[Hefestos] Starting OpenCode..."
 opencode web --hostname 0.0.0.0 --port 10001 &
 
