@@ -46,12 +46,16 @@ const server = http.createServer(async (req, res) => {
     const { name, discord_token, description } = JSON.parse(await readBody(req));
     if (!name || !discord_token) return json(res, { error: 'Nome e token obrigatorios' }, 400);
     const bot = await db.createBot(name, discord_token, description || null);
-    discord.start(bot);
     if (description?.trim()) {
-      formatPrompt(description).then(prompt => {
-        if (prompt) db.setBotPrompt(bot.id, prompt);
-      }).catch(() => {});
+      try {
+        const prompt = await formatPrompt(description);
+        if (prompt) {
+          bot.system_prompt = prompt;
+          await db.setBotPrompt(bot.id, prompt);
+        }
+      } catch (e) {}
     }
+    discord.start(bot);
     return json(res, bot);
   }
 
