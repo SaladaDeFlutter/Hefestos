@@ -9,21 +9,19 @@ const PORT = process.env.PORT || 10000;
 const OCPORT = 10001;
 const ADMIN = fs.readFileSync(path.join(__dirname, 'public', 'admin.html'), 'utf-8');
 
-function clientIdFromToken(token) {
-  try { return Buffer.from(token.split('.')[0], 'base64').toString(); } catch { return null; }
+function clientIdFromToken(t) {
+  try { return Buffer.from(t.split('.')[0], 'base64').toString(); } catch { return null; }
 }
-function inviteUrl(token) {
-  const cid = clientIdFromToken(token);
-  return cid ? `https://discord.com/oauth2/authorize?client_id=${cid}&permissions=2147551232&scope=bot` : null;
+function inviteUrl(t) {
+  const c = clientIdFromToken(t);
+  return c ? `https://discord.com/oauth2/authorize?client_id=${c}&permissions=2147551232&scope=bot` : null;
 }
 
-async function formatPrompt(description) {
-  if (!description?.trim()) return null;
-  const session = await opencode.createSession('format');
-  const resp = await opencode.sendMessage(session.id,
-    `Converta isso em um system prompt conciso para IA (3 frases no maximo). Apenas o prompt, sem explicacoes:\n\n"${description}"`
-  );
-  return opencode.extractResponse(resp)?.trim() || null;
+async function formatPrompt(desc) {
+  if (!desc?.trim()) return null;
+  const s = await opencode.createSession('format');
+  const r = await opencode.sendMessage(s.id, `Converta isso em system prompt IA conciso (max 3 frases, apenas o prompt):\n"${desc}"`);
+  return opencode.extractResponse(r)?.trim() || null;
 }
 
 const server = http.createServer(async (req, res) => {
@@ -34,11 +32,16 @@ const server = http.createServer(async (req, res) => {
 
   if (u.pathname === '/admin/api/bots' && req.method === 'GET') {
     const bots = await db.listBots();
-    return json(res, bots.map(b => ({
-      id: b.id, name: b.name, description: b.description, created_at: b.created_at,
-      online: discord.isOnline(b.id),
-      invite: inviteUrl(b.discord_token),
-      discord_token: b.discord_token,
+    return json(res, await Promise.all(bots.map(async b => {
+      const stats = b.session_id ? await opencode.sessionStats(b.session_id).catch(() => null) : null;
+      return {
+        id: b.id, name: b.name, description: b.description, created_at: b.created_at,
+        online: discord.isOnline(b.id),
+        invite: inviteUrl(b.discord_token),
+        discord_token: b.discord_token,
+        cost: stats?.cost || 0,
+        tokens: stats?.tokens || { input: 0, output: 0 },
+      };
     })));
   }
 
@@ -47,16 +50,18 @@ const server = http.createServer(async (req, res) => {
     if (!name || !discord_token) return json(res, { error: 'Nome e token obrigatorios' }, 400);
     const bot = await db.createBot(name, discord_token, description || null);
     if (description?.trim()) {
-      try {
-        const prompt = await formatPrompt(description);
-        if (prompt) {
-          bot.system_prompt = prompt;
-          await db.setBotPrompt(bot.id, prompt);
-        }
-      } catch (e) {}
+      try { const p = await formatPrompt(description); if (p) { bot.system_prompt = p; await db.setBotPrompt(bot.id, p); } } catch (e) {}
     }
     discord.start(bot);
     return json(res, bot);
+  }
+
+  if (u.pathname.startsWith('/admin/api/bots/') && u.pathname.endsWith('/restart') && req.method === 'POST') {
+    const id = parseInt(u.pathname.split('/')[4]);
+    const bot = await db.getBot(id);
+    if (!bot) return json(res, { error: 'Not found' }, 404);
+    await discord.restart(id, bot);
+    return json(res, { ok: true });
   }
 
   if (u.pathname.startsWith('/admin/api/bots/') && req.method === 'PUT') {
@@ -79,9 +84,9 @@ const server = http.createServer(async (req, res) => {
     const bot = await db.getBot(id);
     if (!bot) return json(res, { error: 'Not found' }, 404);
     try {
-      const r = await fetch('https://discord.com/api/v10/users/@me', { headers: { Authorization: `Bot ${bot.discord_token.trim()}` } });
-      const data = await r.json();
-      return json(res, { ok: r.ok, username: data.username, error: r.ok ? null : data.message });
+      const r = await fetch(`https://discord.com/api/v10/users/@me`, { headers: { Authorization: `Bot ${bot.discord_token.trim()}` } });
+      const d = await r.json();
+      return json(res, { ok: r.ok, username: d.username, error: r.ok ? null : d.message });
     } catch (e) { return json(res, { ok: false, error: e.message }); }
   }
 
@@ -110,14 +115,10 @@ const server = http.createServer(async (req, res) => {
 });
 
 function proxy(req, res) {
-  const opts = {
-    hostname: '127.0.0.1', port: OCPORT, path: req.url, method: req.method,
-    headers: { ...req.headers, host: `127.0.0.1:${OCPORT}` },
-  };
+  const opts = { hostname: '127.0.0.1', port: OCPORT, path: req.url, method: req.method, headers: { ...req.headers, host: `127.0.0.1:${OCPORT}` } };
   const p = http.request(opts, (pr) => {
     const h = { ...pr.headers };
-    if (req.url.includes('/event') && h['content-type'] === 'text/html')
-      h['content-type'] = 'text/event-stream';
+    if (req.url.includes('/event') && h['content-type'] === 'text/html') h['content-type'] = 'text/event-stream';
     delete h['transfer-encoding'];
     res.writeHead(pr.statusCode, h);
     pr.pipe(res);
