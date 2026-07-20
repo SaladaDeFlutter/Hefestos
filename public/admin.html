@@ -58,6 +58,7 @@
     .btn-danger { background: #1c1136; color: #f87171; }
     .btn-danger:hover { background: #2a184a; }
     .btn-full { width: 100%; }
+    .notice { background: #12122e; border: 1px solid #2a2a5e; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #8b8bcb; line-height: 1.45; margin-top: 12px; }
 
     .bot-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
     .bot-row:last-child { border-bottom: none; }
@@ -127,6 +128,7 @@
         <form id="bot-form">
           <div class="field"><label>Nome</label><input name="name" required placeholder="Nome do bot" autocomplete="off" /></div>
           <div class="field"><label>Token do Discord</label><input name="discord_token" required placeholder="Token do Discord Developer Portal" type="password" autocomplete="off" /></div>
+          <div class="notice">Antes de criar, acesse o <strong>Discord Developer Portal</strong>, selecione o app do bot, va na aba <strong>Bot</strong> e ative o <strong>Message Content Intent</strong>. Sem isso o bot nao le mensagens no PV.</div>
           <button type="submit" class="btn btn-primary btn-full">Criar Bot</button>
         </form>
       </div>
