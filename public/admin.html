@@ -6,113 +6,81 @@
   <title>Hefestos</title>
   <style>
     :root {
-      --bg: #0a0a0f;
-      --surface: #12121a;
-      --surface2: #181825;
-      --border: #1e1e2e;
-      --text: #cdd6f4;
-      --muted: #6c7086;
-      --accent: #e94560;
-      --accent2: #c53050;
-      --green: #4ecca3;
-      --radius: 10px;
+      --bg: #0a0a0f; --surface: #12121a; --surface2: #181825;
+      --border: #1e1e2e; --text: #cdd6f4; --muted: #6c7086;
+      --accent: #e94560; --accent2: #c53050; --green: #4ecca3; --radius: 10px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg); color: var(--text); min-height: 100dvh;
-      padding: 16px; max-width: 640px; margin: 0 auto;
+      padding: 16px; max-width: 480px; margin: 0 auto;
     }
-    header {
-      display: flex; align-items: center; gap: 12px;
-      padding: 20px 0 24px;
-    }
+    header { display: flex; align-items: center; gap: 10px; padding: 20px 0 24px; }
     header .logo { font-size: 28px; }
-    header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+    header h1 { font-size: 22px; font-weight: 700; }
     header span { color: var(--muted); font-size: 13px; }
 
-    .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
-    }
-    .card h3 {
-      font-size: 15px; font-weight: 600; margin-bottom: 16px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .card h3 .ico { font-size: 18px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; }
+    .card h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; }
 
-    .field { margin-bottom: 14px; }
+    .field { margin-bottom: 12px; }
     .field label {
-      display: block; font-size: 12px; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+      display: block; font-size: 11px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px;
     }
-    .field input, .field select {
+    .field input {
       width: 100%; padding: 10px 14px; background: var(--surface2);
       border: 1px solid var(--border); color: var(--text);
       border-radius: 8px; font-size: 14px; outline: none;
-      transition: border-color 0.2s;
     }
-    .field input:focus, .field select:focus { border-color: var(--accent); }
+    .field input:focus { border-color: var(--accent); }
     .field input::placeholder { color: var(--muted); }
 
-    .row { display: flex; gap: 12px; }
-    .row .field { flex: 1; }
-
     .btn {
-      display: inline-flex; align-items: center; gap: 6px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
       padding: 10px 20px; border: none; border-radius: 8px;
       font-size: 14px; font-weight: 600; cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
     }
     .btn:active { transform: scale(0.97); }
-    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary { background: var(--accent); color: #fff; width: 100%; }
     .btn-primary:hover { background: var(--accent2); }
-    .btn-cancel { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
     .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+    .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
 
     .bot-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 0; border-bottom: 1px solid var(--border);
-      gap: 12px;
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
     }
     .bot-item:last-child { border-bottom: none; }
     .bot-info { flex: 1; min-width: 0; }
     .bot-name {
       font-weight: 600; font-size: 14px;
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: center; gap: 6px;
     }
-    .bot-status {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--green);
-      display: inline-block;
-    }
-    .bot-meta {
-      font-size: 12px; color: var(--muted); margin-top: 2px;
-      display: flex; gap: 8px; align-items: center;
-    }
-    .tag {
-      background: var(--surface2); border: 1px solid var(--border);
-      padding: 2px 8px; border-radius: 4px; font-size: 11px;
-    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; flex-shrink: 0; }
+    .bot-tag { font-size: 11px; color: var(--muted); margin-top: 2px; }
     .bot-actions { display: flex; gap: 6px; flex-shrink: 0; }
-    .empty { text-align: center; color: var(--muted); padding: 32px 0; font-size: 14px; }
-    .empty .ico { font-size: 32px; margin-bottom: 8px; display: block; }
+
+    .empty { text-align: center; color: var(--muted); padding: 28px 0; font-size: 14px; }
+    .empty .ico { font-size: 32px; display: block; margin-bottom: 8px; }
 
     .toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
       background: var(--accent); color: #fff; padding: 10px 20px;
       border-radius: 8px; font-size: 13px; font-weight: 500;
       display: none; z-index: 99; box-shadow: 0 4px 20px rgba(233,69,96,0.3);
     }
 
-    .status-bar {
-      padding: 10px 16px; background: var(--surface);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      font-size: 13px; color: var(--muted); margin-bottom: 16px;
-      display: flex; align-items: center; gap: 8px;
+    .bar {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 8px 14px; margin-bottom: 14px;
+      font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px;
     }
-    .dot { width: 6px; height: 6px; border-radius: 50%; }
-    .dot.on { background: var(--green); }
+
+    .footer {
+      text-align: center; padding: 20px 0; color: var(--muted); font-size: 12px;
+    }
 
     #edit-modal {
       display: none; position: fixed; inset: 0;
@@ -120,7 +88,7 @@
       align-items: center; justify-content: center; padding: 16px;
     }
     #edit-modal.show { display: flex; }
-    #edit-modal .card { width: 100%; max-width: 500px; }
+    #edit-modal .card { width: 100%; max-width: 400px; }
 
     button:disabled { opacity: 0.4; cursor: not-allowed; }
   </style>
@@ -130,53 +98,31 @@
     <span class="logo">🔨</span>
     <div>
       <h1>Hefestos</h1>
-      <span>Gerenciador de bots Discord com IA</span>
+      <span>Bots Discord com DeepSeek V4 Flash</span>
     </div>
   </header>
 
-  <div class="status-bar">
-    <span class="dot on"></span> API online
-    <span style="margin-left:auto" id="bot-count">0 bots</span>
+  <div class="bar">
+    <span class="dot"></span> DeepSeek V4 Flash &nbsp;·&nbsp; <span id="bot-count">0 bots</span>
   </div>
 
-  <div class="card" id="form-card">
-    <h3><span class="ico">🤖</span> Novo Bot</h3>
+  <div class="card">
+    <h3>🤖 Criar Bot</h3>
     <form id="bot-form">
       <div class="field">
         <label>Nome do bot</label>
         <input name="name" required placeholder="Ex: Meu Assistente" autocomplete="off" />
       </div>
-      <div class="row">
-        <div class="field">
-          <label>Provedor de IA</label>
-          <select name="provider">
-            <option value="deepseek">DeepSeek</option>
-            <option value="openai">OpenAI</option>
-            <option value="anthropic">Anthropic</option>
-            <option value="google">Google Gemini</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Modelo</label>
-          <input name="model" value="deepseek/deepseek-v4-flash" placeholder="provider/modelo" />
-        </div>
-      </div>
       <div class="field">
-        <label>API Key do provedor</label>
-        <input name="api_key" required placeholder="sk-..." type="password" autocomplete="off" />
-      </div>
-      <div class="field">
-        <label>Token do bot Discord</label>
+        <label>Token do Discord</label>
         <input name="discord_token" required placeholder="Cole o token do Discord Developer Portal" type="password" autocomplete="off" />
       </div>
-      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
-        Criar Bot
-      </button>
+      <button type="submit" class="btn btn-primary">Criar Bot</button>
     </form>
   </div>
 
   <div class="card">
-    <h3><span class="ico">📋</span> Seus Bots</h3>
+    <h3>📋 Seus Bots</h3>
     <div id="bot-list"><div class="empty"><span class="ico">🤖</span>Nenhum bot ainda</div></div>
   </div>
 
@@ -186,21 +132,17 @@
       <form id="edit-form">
         <input type="hidden" name="id" />
         <div class="field"><label>Nome</label><input name="name" required /></div>
-        <div class="row">
-          <div class="field"><label>Provedor</label><select name="provider"><option value="deepseek">DeepSeek</option><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option><option value="google">Google Gemini</option></select></div>
-          <div class="field"><label>Modelo</label><input name="model" /></div>
-        </div>
-        <div class="field"><label>API Key</label><input name="api_key" required type="password" /></div>
         <div class="field"><label>Token Discord</label><input name="discord_token" required type="password" /></div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;">
-          <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Salvar</button>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+          <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" style="width:auto">Salvar</button>
         </div>
       </form>
     </div>
   </div>
 
   <div id="toast" class="toast"></div>
+  <div class="footer">Bots respondem no PV e ao serem mencionados</div>
 
   <script>
     const $ = id => document.getElementById(id);
@@ -224,16 +166,12 @@
       list.innerHTML = bots.map(b => `
         <div class="bot-item">
           <div class="bot-info">
-            <div class="bot-name">
-              <span class="bot-status"></span> ${esc(b.name)}
-            </div>
-            <div class="bot-meta">
-              <span class="tag">${b.provider}</span> ${b.model}
-            </div>
+            <div class="bot-name"><span class="dot"></span> ${esc(b.name)}</div>
+            <div class="bot-tag">ID: ${b.id}</div>
           </div>
           <div class="bot-actions">
-            <button class="btn btn-sm btn-cancel" onclick="editBot(${b.id}, '${esc(b.name)}', '${b.provider}', '${esc(b.model)}', '${esc(b.api_key)}', '${esc(b.discord_token)}')">Editar</button>
-            <button class="btn btn-sm" style="background:#441111;color:#ff6b6b" onclick="delBot(${b.id})">Apagar</button>
+            <button class="btn btn-sm btn-ghost" onclick='editBot(${b.id},"${esc(b.name)}","${esc(b.discord_token)}")'>Editar</button>
+            <button class="btn btn-sm" style="background:#331111;color:#ff6b6b" onclick="delBot(${b.id})">Apagar</button>
           </div>
         </div>
       `).join('');
@@ -242,35 +180,27 @@
     function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
     async function delBot(id) {
-      if (!confirm('Apagar este bot? A ação é irreversível.')) return;
+      if (!confirm('Apagar este bot?')) return;
       await fetch(`/admin/api/bots/${id}`, { method: 'DELETE' });
       toast('Bot removido');
       loadBots();
     }
 
-    function editBot(id, name, provider, model, apiKey, token) {
+    function editBot(id, name, token) {
       editingId = id;
       const f = $('edit-form');
       f.id.value = id;
       f.name.value = name;
-      f.provider.value = provider;
-      f.model.value = model;
-      f.api_key.value = apiKey;
       f.discord_token.value = token;
       $('edit-modal').classList.add('show');
     }
 
-    function closeModal() {
-      $('edit-modal').classList.remove('show');
-      editingId = null;
-    }
-
+    function closeModal() { $('edit-modal').classList.remove('show'); }
     $('edit-modal').addEventListener('click', e => { if (e.target === $('edit-modal')) closeModal(); });
 
     $('bot-form').onsubmit = async e => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(e.target));
-      if (data.provider === 'deepseek' && !data.model) data.model = 'deepseek/deepseek-v4-flash';
       const btn = e.target.querySelector('button');
       btn.disabled = true; btn.textContent = 'Criando...';
       await fetch('/admin/api/bots', {
