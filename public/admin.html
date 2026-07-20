@@ -6,81 +6,121 @@
   <title>Hefestos</title>
   <style>
     :root {
-      --bg: #0a0a0f; --surface: #12121a; --surface2: #181825;
-      --border: #1e1e2e; --text: #cdd6f4; --muted: #6c7086;
-      --accent: #e94560; --accent2: #c53050; --green: #4ecca3; --radius: 10px;
+      --bg: #08080d; --surface: #0e0e18; --surface2: #141425;
+      --border: #1c1c32; --text: #e0e0f0; --muted: #5c5c7a;
+      --accent: #e94560; --accent2: #c53050; --green: #4ecca3;
+      --orange: #f59e0b; --radius: 12px;
+      --chat-user: #1c1c32; --chat-bot: #0e0e18;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg); color: var(--text); min-height: 100dvh;
-      padding: 16px; max-width: 480px; margin: 0 auto;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg); color: var(--text); height: 100dvh;
+      display: flex; overflow: hidden;
     }
-    header { display: flex; align-items: center; gap: 10px; padding: 20px 0 24px; }
-    header .logo { font-size: 28px; }
-    header h1 { font-size: 22px; font-weight: 700; }
-    header span { color: var(--muted); font-size: 13px; }
 
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; }
-    .card h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+    nav {
+      width: 200px; background: var(--surface); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0;
+    }
+    nav .brand {
+      padding: 0 20px 24px; font-size: 18px; font-weight: 700;
+      display: flex; align-items: center; gap: 8px; color: var(--text);
+    }
+    nav .brand span { color: var(--accent); }
+    nav .nav-item {
+      padding: 10px 20px; cursor: pointer; font-size: 13px; font-weight: 500;
+      color: var(--muted); display: flex; align-items: center; gap: 8px;
+      border-left: 2px solid transparent; transition: all 0.15s;
+    }
+    nav .nav-item:hover { color: var(--text); background: var(--surface2); }
+    nav .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--surface2); }
+    nav .status { margin-top: auto; padding: 16px 20px; font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    nav .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; }
+
+    main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    .tab { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    .tab.active { display: flex; }
+
+    .tab-bots { padding: 24px; overflow-y: auto; }
+    .tab-bots .header { margin-bottom: 20px; }
+    .tab-bots h2 { font-size: 18px; font-weight: 600; }
+
+    .form-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; margin-bottom: 16px;
+    }
+    .form-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; }
 
     .field { margin-bottom: 12px; }
-    .field label {
-      display: block; font-size: 11px; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px;
-    }
+    .field label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; font-weight: 600; }
     .field input {
-      width: 100%; padding: 10px 14px; background: var(--surface2);
-      border: 1px solid var(--border); color: var(--text);
-      border-radius: 8px; font-size: 14px; outline: none;
+      width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border);
+      color: var(--text); border-radius: 8px; font-size: 14px; outline: none;
     }
     .field input:focus { border-color: var(--accent); }
     .field input::placeholder { color: var(--muted); }
 
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 10px 20px; border: none; border-radius: 8px;
-      font-size: 14px; font-weight: 600; cursor: pointer;
+      padding: 10px 18px; border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s;
     }
     .btn:active { transform: scale(0.97); }
-    .btn-primary { background: var(--accent); color: #fff; width: 100%; }
+    .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { background: var(--accent2); }
-    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+    .btn-sm { padding: 6px 12px; font-size: 11px; border-radius: 6px; }
     .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--border); }
+    .btn-danger { background: #331111; color: #ff6b6b; }
+    .btn-danger:hover { background: #441c1c; }
+    .btn-full { width: 100%; }
 
-    .bot-item {
+    .bot-row {
       display: flex; align-items: center; gap: 10px;
       padding: 12px 0; border-bottom: 1px solid var(--border);
+      font-size: 14px;
     }
-    .bot-item:last-child { border-bottom: none; }
-    .bot-info { flex: 1; min-width: 0; }
-    .bot-name {
-      font-weight: 600; font-size: 14px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; flex-shrink: 0; }
-    .bot-tag { font-size: 11px; color: var(--muted); margin-top: 2px; }
-    .bot-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .bot-row:last-child { border-bottom: none; }
+    .bot-row .info { flex: 1; min-width: 0; }
+    .bot-row .name { font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .bot-row .tag { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .bot-row .actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .empty-state { text-align: center; color: var(--muted); padding: 32px 0; font-size: 14px; }
+    .empty-state .ico { font-size: 32px; display: block; margin-bottom: 8px; }
 
-    .empty { text-align: center; color: var(--muted); padding: 28px 0; font-size: 14px; }
-    .empty .ico { font-size: 32px; display: block; margin-bottom: 8px; }
-
-    .toast {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: var(--accent); color: #fff; padding: 10px 20px;
-      border-radius: 8px; font-size: 13px; font-weight: 500;
-      display: none; z-index: 99; box-shadow: 0 4px 20px rgba(233,69,96,0.3);
+    .chat-header {
+      padding: 16px 24px; background: var(--surface); border-bottom: 1px solid var(--border);
+      font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+      flex-shrink: 0;
     }
-
-    .bar {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 8px 14px; margin-bottom: 14px;
-      font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px;
+    .chat-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; }
+    .chat-msgs {
+      flex: 1; overflow-y: auto; padding: 20px 24px;
+      display: flex; flex-direction: column; gap: 16px;
     }
+    .msg { max-width: 85%; display: flex; flex-direction: column; gap: 4px; }
+    .msg.user { align-self: flex-end; }
+    .msg.bot { align-self: flex-start; }
+    .msg .role { font-size: 10px; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; padding: 0 4px; }
+    .msg .bubble { padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+    .msg.user .bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+    .msg.bot .bubble { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .msg.bot .bubble.loading { animation: pulse 1.5s infinite; color: var(--muted); }
+    @keyframes pulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.4 } }
 
-    .footer {
-      text-align: center; padding: 20px 0; color: var(--muted); font-size: 12px;
+    .chat-input {
+      padding: 14px 24px; background: var(--surface); border-top: 1px solid var(--border);
+      display: flex; gap: 10px; flex-shrink: 0;
     }
+    .chat-input textarea {
+      flex: 1; background: var(--bg); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 14px; border-radius: 8px; resize: none;
+      font-size: 14px; font-family: inherit; outline: none; height: 44px;
+    }
+    .chat-input textarea:focus { border-color: var(--accent); }
+
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; display: none; z-index: 99; }
 
     #edit-modal {
       display: none; position: fixed; inset: 0;
@@ -88,114 +128,186 @@
       align-items: center; justify-content: center; padding: 16px;
     }
     #edit-modal.show { display: flex; }
-    #edit-modal .card { width: 100%; max-width: 400px; }
+    #edit-modal .form-card { width: 100%; max-width: 400px; }
 
     button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    @media (max-width: 640px) {
+      nav { width: 56px; }
+      nav .brand { padding: 0 14px 20px; font-size: 20px; }
+      nav .brand span:last-child { display: none; }
+      nav .nav-item { padding: 12px 18px; font-size: 17px; justify-content: center; }
+      nav .nav-item span:last-child { display: none; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <span class="logo">🔨</span>
-    <div>
-      <h1>Hefestos</h1>
-      <span>Bots Discord com DeepSeek V4 Flash</span>
-    </div>
-  </header>
+  <nav>
+    <div class="brand"><span>🔨</span><span>Hefestos</span></div>
+    <div class="nav-item active" data-tab="chat">💬 <span>Chat</span></div>
+    <div class="nav-item" data-tab="bots">🤖 <span>Bots</span></div>
+    <div class="status"><span class="dot"></span> DeepSeek V4 Flash</div>
+  </nav>
 
-  <div class="bar">
-    <span class="dot"></span> DeepSeek V4 Flash &nbsp;·&nbsp; <span id="bot-count">0 bots</span>
-  </div>
-
-  <div class="card">
-    <h3>🤖 Criar Bot</h3>
-    <form id="bot-form">
-      <div class="field">
-        <label>Nome do bot</label>
-        <input name="name" required placeholder="Ex: Meu Assistente" autocomplete="off" />
+  <main>
+    <section class="tab active" id="tab-chat">
+      <div class="chat-header"><span class="dot"></span> Chat com DeepSeek V4 Flash</div>
+      <div class="chat-msgs" id="chat-msgs">
+        <div class="msg bot">
+          <span class="role">Hefestos</span>
+          <div class="bubble">Olá! Sou o Hefestos, assistente de IA. Como posso ajudar?</div>
+        </div>
       </div>
-      <div class="field">
-        <label>Token do Discord</label>
-        <input name="discord_token" required placeholder="Cole o token do Discord Developer Portal" type="password" autocomplete="off" />
+      <div class="chat-input">
+        <textarea id="chat-input" placeholder="Digite sua mensagem..." rows="1"></textarea>
+        <button class="btn btn-primary" id="chat-send">Enviar</button>
       </div>
-      <button type="submit" class="btn btn-primary">Criar Bot</button>
-    </form>
-  </div>
+    </section>
 
-  <div class="card">
-    <h3>📋 Seus Bots</h3>
-    <div id="bot-list"><div class="empty"><span class="ico">🤖</span>Nenhum bot ainda</div></div>
-  </div>
+    <section class="tab tab-bots" id="tab-bots">
+      <div class="header"><h2>Gerenciar Bots Discord</h2></div>
+      <div class="form-card">
+        <h3>🤖 Criar Novo Bot</h3>
+        <form id="bot-form">
+          <div class="field"><label>Nome</label><input name="name" required placeholder="Ex: Meu Assistente" autocomplete="off" /></div>
+          <div class="field"><label>Token do Bot</label><input name="discord_token" required placeholder="Cole o token do Discord Developer Portal" type="password" autocomplete="off" /></div>
+          <button type="submit" class="btn btn-primary btn-full">Criar Bot</button>
+        </form>
+      </div>
+      <div class="form-card">
+        <h3>📋 Bots Ativos</h3>
+        <div id="bot-list"><div class="empty-state"><span class="ico">🤖</span>Nenhum bot ainda</div></div>
+      </div>
+    </section>
+  </main>
 
   <div id="edit-modal">
-    <div class="card">
+    <div class="form-card">
       <h3>Editar Bot</h3>
       <form id="edit-form">
         <input type="hidden" name="id" />
         <div class="field"><label>Nome</label><input name="name" required /></div>
-        <div class="field"><label>Token Discord</label><input name="discord_token" required type="password" /></div>
+        <div class="field"><label>Token</label><input name="discord_token" required type="password" /></div>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
           <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary" style="width:auto">Salvar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
         </div>
       </form>
     </div>
   </div>
 
   <div id="toast" class="toast"></div>
-  <div class="footer">Bots respondem no PV e ao serem mencionados</div>
 
   <script>
     const $ = id => document.getElementById(id);
-    let editingId = null;
+    let chatSessionId = null;
+    let chatSending = false;
 
     function toast(msg) {
-      const t = $('toast');
-      t.textContent = msg; t.style.display = 'block';
+      const t = $('toast'); t.textContent = msg; t.style.display = 'block';
       setTimeout(() => t.style.display = 'none', 2500);
     }
+    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.onclick = () => {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        $(`tab-${item.dataset.tab}`).classList.add('active');
+      };
+    });
+
+    async function chatApi(method, path, body) {
+      const opts = { method, headers: {} };
+      if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+      const res = await fetch(path, opts);
+      if (res.status === 204) return null;
+      const text = await res.text();
+      if (!res.ok) throw new Error(text);
+      return text ? JSON.parse(text) : null;
+    }
+
+    async function initChat() {
+      const session = await chatApi('POST', '/session', { title: 'Chat Admin' });
+      chatSessionId = session.id;
+    }
+
+    async function sendChat() {
+      if (chatSending) return;
+      const input = $('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      chatSending = true;
+      input.value = '';
+      $('chat-send').disabled = true;
+
+      const msgs = $('chat-msgs');
+      const userMsg = document.createElement('div');
+      userMsg.className = 'msg user';
+      userMsg.innerHTML = `<span class="role">Você</span><div class="bubble">${esc(text)}</div>`;
+      msgs.appendChild(userMsg);
+
+      const botDiv = document.createElement('div');
+      botDiv.className = 'msg bot';
+      botDiv.innerHTML = '<span class="role">Hefestos</span><div class="bubble loading">Pensando...</div>';
+      msgs.appendChild(botDiv);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      try {
+        if (!chatSessionId) await initChat();
+        const response = await chatApi('POST', `/session/${chatSessionId}/message`, { parts: [{ type: 'text', text }] });
+        const reply = (response?.parts || []).filter(p => p.type === 'text').map(p => p.text).join('');
+        botDiv.innerHTML = `<span class="role">Hefestos</span><div class="bubble">${esc(reply || 'Sem resposta.')}</div>`;
+      } catch (e) {
+        botDiv.innerHTML = `<span class="role">Hefestos</span><div class="bubble" style="color:#ff6b6b">Erro: ${esc(e.message)}</div>`;
+      }
+
+      chatSending = false;
+      $('chat-send').disabled = false;
+      input.focus();
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    $('chat-send').onclick = sendChat;
+    $('chat-input').onkeydown = e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+    };
 
     async function loadBots() {
       const res = await fetch('/admin/api/bots');
       const bots = await res.json();
-      $('bot-count').textContent = bots.length + ' bot' + (bots.length !== 1 ? 's' : '');
       const list = $('bot-list');
       if (!bots.length) {
-        list.innerHTML = '<div class="empty"><span class="ico">🤖</span>Nenhum bot ainda</div>';
+        list.innerHTML = '<div class="empty-state"><span class="ico">🤖</span>Nenhum bot ainda</div>';
         return;
       }
       list.innerHTML = bots.map(b => `
-        <div class="bot-item">
-          <div class="bot-info">
-            <div class="bot-name"><span class="dot"></span> ${esc(b.name)}</div>
-            <div class="bot-tag">ID: ${b.id}</div>
+        <div class="bot-row">
+          <div class="info">
+            <div class="name"><span class="dot" style="width:7px;height:7px;display:inline-block;background:var(--green);border-radius:50%"></span> ${esc(b.name)}</div>
+            <div class="tag">ID: ${b.id}</div>
           </div>
-          <div class="bot-actions">
-            ${b.invite ? `<button class="btn btn-sm btn-primary" onclick="window.open('${esc(b.invite)}','_blank')" title="Adicionar ao Discord">+ Add</button>` : ''}
+          <div class="actions">
+            ${b.invite ? `<button class="btn btn-sm btn-primary" onclick="window.open('${esc(b.invite)}','_blank')">+ Add</button>` : ''}
             <button class="btn btn-sm btn-ghost" onclick='editBot(${b.id},"${esc(b.name)}","${esc(b.discord_token)}")'>Editar</button>
-            <button class="btn btn-sm" style="background:#331111;color:#ff6b6b" onclick="delBot(${b.id})">Apagar</button>
+            <button class="btn btn-sm btn-danger" onclick="delBot(${b.id})">Apagar</button>
           </div>
-        </div>
-      `).join('');
+        </div>`).join('');
     }
-
-    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
     async function delBot(id) {
       if (!confirm('Apagar este bot?')) return;
       await fetch(`/admin/api/bots/${id}`, { method: 'DELETE' });
-      toast('Bot removido');
-      loadBots();
+      toast('Bot removido'); loadBots();
     }
 
     function editBot(id, name, token) {
-      editingId = id;
       const f = $('edit-form');
-      f.id.value = id;
-      f.name.value = name;
-      f.discord_token.value = token;
+      f.id.value = id; f.name.value = name; f.discord_token.value = token;
       $('edit-modal').classList.add('show');
     }
-
     function closeModal() { $('edit-modal').classList.remove('show'); }
     $('edit-modal').addEventListener('click', e => { if (e.target === $('edit-modal')) closeModal(); });
 
@@ -204,31 +316,20 @@
       const data = Object.fromEntries(new FormData(e.target));
       const btn = e.target.querySelector('button');
       btn.disabled = true; btn.textContent = 'Criando...';
-      await fetch('/admin/api/bots', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
+      await fetch('/admin/api/bots', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
       btn.disabled = false; btn.textContent = 'Criar Bot';
-      toast('Bot criado e online!');
-      e.target.reset();
-      loadBots();
+      toast('Bot criado e online!'); e.target.reset(); loadBots();
     };
 
     $('edit-form').onsubmit = async e => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(e.target));
       const id = data.id; delete data.id;
-      await fetch(`/admin/api/bots/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      closeModal();
-      toast('Bot atualizado!');
-      loadBots();
+      await fetch(`/admin/api/bots/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      closeModal(); toast('Bot atualizado!'); loadBots();
     };
 
+    initChat();
     loadBots();
   </script>
 </body>
