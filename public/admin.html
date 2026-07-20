@@ -293,11 +293,22 @@
           </div>
           <div class="actions">
             ${b.invite ? `<button class="btn btn-sm btn-primary" onclick="window.open('${esc(b.invite)}','_blank')">Add Discord</button>` : ''}
+            <button class="btn btn-sm btn-ghost" onclick="testBot(${b.id})">Testar</button>
             <button class="btn btn-sm btn-primary" onclick="openCustomize(${b.id},'${esc(b.name)}')">Customizar</button>
             <button class="btn btn-sm btn-ghost" onclick='editBot(${b.id},"${esc(b.name)}","${esc(b.discord_token)}")'>Editar</button>
             <button class="btn btn-sm btn-danger" onclick="delBot(${b.id})">Apagar</button>
           </div>
         </div>`).join('');
+    }
+
+    async function testBot(id) {
+      const res = await fetch(`/admin/api/bots/${id}/test`, { method: 'POST' });
+      const data = await res.json();
+      if (data.ok) {
+        toast(`Token valido. Bot: ${data.username}`);
+      } else {
+        toast(`Token invalido: ${data.error}`);
+      }
     }
 
     async function delBot(id) {

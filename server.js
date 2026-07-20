@@ -54,6 +54,21 @@ const server = http.createServer(async (req, res) => {
     return json(res, bot);
   }
 
+  if (u.pathname.match(/^\/admin\/api\/bots\/\d+\/test$/) && req.method === 'POST') {
+    const id = parseInt(u.pathname.split('/')[4]);
+    const bot = await db.getBot(id);
+    if (!bot) return json(res, { error: 'Not found' }, 404);
+    try {
+      const r = await fetch('https://discord.com/api/v10/users/@me', {
+        headers: { Authorization: `Bot ${bot.discord_token.trim()}` },
+      });
+      const data = await r.json();
+      return json(res, { ok: r.ok, username: data.username, status: r.status, error: r.ok ? null : data.message });
+    } catch (e) {
+      return json(res, { ok: false, error: e.message });
+    }
+  }
+
   if (u.pathname.startsWith('/admin/api/bots/') && req.method === 'PUT') {
     const parts = u.pathname.split('/');
     const id = parseInt(parts[parts.length - 1]);
