@@ -6,11 +6,9 @@
   <title>Hefestos</title>
   <style>
     :root {
-      --bg: #08080d; --surface: #0e0e18; --surface2: #141425;
-      --border: #1c1c32; --text: #e0e0f0; --muted: #5c5c7a;
-      --accent: #e94560; --accent2: #c53050; --green: #4ecca3;
-      --orange: #f59e0b; --radius: 12px;
-      --chat-user: #1c1c32; --chat-bot: #0e0e18;
+      --bg: #06060c; --surface: #0c0c18; --surface2: #13132a;
+      --border: #1a1a38; --text: #e0e0f0; --muted: #52527a;
+      --accent: #6366f1; --accent2: #4f46e5; --green: #34d399; --radius: 12px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -18,165 +16,120 @@
       background: var(--bg); color: var(--text); height: 100dvh;
       display: flex; overflow: hidden;
     }
-
     nav {
       width: 200px; background: var(--surface); border-right: 1px solid var(--border);
-      display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0;
+      display: flex; flex-direction: column; padding: 24px 0; flex-shrink: 0;
     }
-    nav .brand {
-      padding: 0 20px 24px; font-size: 18px; font-weight: 700;
-      display: flex; align-items: center; gap: 8px; color: var(--text);
-    }
-    nav .brand span { color: var(--accent); }
+    nav .brand { padding: 0 20px 20px; font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
     nav .nav-item {
       padding: 10px 20px; cursor: pointer; font-size: 13px; font-weight: 500;
-      color: var(--muted); display: flex; align-items: center; gap: 8px;
-      border-left: 2px solid transparent; transition: all 0.15s;
+      color: var(--muted); border-left: 2px solid transparent; transition: all 0.15s;
     }
     nav .nav-item:hover { color: var(--text); background: var(--surface2); }
     nav .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--surface2); }
     nav .status { margin-top: auto; padding: 16px 20px; font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-    nav .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; }
+    nav .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
 
     main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
     .tab { display: none; flex: 1; flex-direction: column; overflow: hidden; }
     .tab.active { display: flex; }
 
+    .tab-chat { padding: 0; }
     .tab-bots { padding: 24px; overflow-y: auto; }
-    .tab-bots .header { margin-bottom: 20px; }
-    .tab-bots h2 { font-size: 18px; font-weight: 600; }
+    .tab-bots h2 { font-size: 17px; font-weight: 600; margin-bottom: 20px; }
 
-    .form-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 20px; margin-bottom: 16px;
-    }
+    .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
     .form-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; }
 
     .field { margin-bottom: 12px; }
     .field label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; font-weight: 600; }
-    .field input {
-      width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border);
-      color: var(--text); border-radius: 8px; font-size: 14px; outline: none;
-    }
+    .field input { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-size: 14px; outline: none; }
     .field input:focus { border-color: var(--accent); }
     .field input::placeholder { color: var(--muted); }
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 10px 18px; border: none; border-radius: 8px;
-      font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s;
-    }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 18px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
     .btn:active { transform: scale(0.97); }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { background: var(--accent2); }
     .btn-sm { padding: 6px 12px; font-size: 11px; border-radius: 6px; }
     .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
     .btn-ghost:hover { background: var(--border); }
-    .btn-danger { background: #331111; color: #ff6b6b; }
-    .btn-danger:hover { background: #441c1c; }
+    .btn-danger { background: #1c1136; color: #f87171; }
+    .btn-danger:hover { background: #2a184a; }
     .btn-full { width: 100%; }
 
-    .bot-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 12px 0; border-bottom: 1px solid var(--border);
-      font-size: 14px;
-    }
+    .bot-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
     .bot-row:last-child { border-bottom: none; }
     .bot-row .info { flex: 1; min-width: 0; }
     .bot-row .name { font-weight: 600; display: flex; align-items: center; gap: 6px; }
     .bot-row .tag { font-size: 11px; color: var(--muted); margin-top: 2px; }
     .bot-row .actions { display: flex; gap: 6px; flex-shrink: 0; }
-    .empty-state { text-align: center; color: var(--muted); padding: 32px 0; font-size: 14px; }
-    .empty-state .ico { font-size: 32px; display: block; margin-bottom: 8px; }
+    .empty-state { text-align: center; color: var(--muted); padding: 40px 0; font-size: 14px; }
 
-    .chat-header {
-      padding: 16px 24px; background: var(--surface); border-bottom: 1px solid var(--border);
-      font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px;
-      flex-shrink: 0;
-    }
-    .chat-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; }
-    .chat-msgs {
-      flex: 1; overflow-y: auto; padding: 20px 24px;
-      display: flex; flex-direction: column; gap: 16px;
-    }
-    .msg { max-width: 85%; display: flex; flex-direction: column; gap: 4px; }
+    .chat-header { padding: 16px 20px; background: var(--surface); border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .chat-msgs { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .msg { max-width: 85%; display: flex; flex-direction: column; gap: 3px; }
     .msg.user { align-self: flex-end; }
     .msg.bot { align-self: flex-start; }
-    .msg .role { font-size: 10px; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; padding: 0 4px; }
-    .msg .bubble { padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
-    .msg.user .bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
-    .msg.bot .bubble { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-    .msg.bot .bubble.loading { animation: pulse 1.5s infinite; color: var(--muted); }
-    @keyframes pulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.4 } }
+    .msg .role { font-size: 10px; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; padding: 0 3px; }
+    .msg .bubble { padding: 10px 14px; border-radius: 10px; font-size: 14px; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+    .msg.user .bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 3px; }
+    .msg.bot .bubble { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 3px; }
+    .msg.bot .bubble.loading { animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1 } 50% { opacity: 0.35 } }
 
-    .chat-input {
-      padding: 14px 24px; background: var(--surface); border-top: 1px solid var(--border);
-      display: flex; gap: 10px; flex-shrink: 0;
-    }
-    .chat-input textarea {
-      flex: 1; background: var(--bg); border: 1px solid var(--border);
-      color: var(--text); padding: 10px 14px; border-radius: 8px; resize: none;
-      font-size: 14px; font-family: inherit; outline: none; height: 44px;
-    }
+    .chat-input { padding: 14px 20px; background: var(--surface); border-top: 1px solid var(--border); display: flex; gap: 10px; flex-shrink: 0; }
+    .chat-input textarea { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; resize: none; font-size: 14px; font-family: inherit; outline: none; height: 44px; }
     .chat-input textarea:focus { border-color: var(--accent); }
 
     .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; display: none; z-index: 99; }
 
-    #edit-modal {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); z-index: 50;
-      align-items: center; justify-content: center; padding: 16px;
-    }
+    #edit-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 50; align-items: center; justify-content: center; padding: 16px; }
     #edit-modal.show { display: flex; }
     #edit-modal .form-card { width: 100%; max-width: 400px; }
 
     button:disabled { opacity: 0.4; cursor: not-allowed; }
 
     @media (max-width: 640px) {
-      nav { width: 56px; }
-      nav .brand { padding: 0 14px 20px; font-size: 20px; }
-      nav .brand span:last-child { display: none; }
-      nav .nav-item { padding: 12px 18px; font-size: 17px; justify-content: center; }
-      nav .nav-item span:last-child { display: none; }
+      nav { width: 52px; }
+      nav .brand { padding: 0 14px 20px; font-size: 18px; text-align: center; }
+      nav .nav-item { padding: 12px 16px; justify-content: center; }
+      nav .status { justify-content: center; }
+      nav .status span:first-child { display: none; }
     }
   </style>
 </head>
 <body>
   <nav>
-    <div class="brand"><span>🔨</span><span>Hefestos</span></div>
-    <div class="nav-item active" data-tab="chat">💬 <span>Chat</span></div>
-    <div class="nav-item" data-tab="bots">🤖 <span>Bots</span></div>
-    <div class="status"><span class="dot"></span> DeepSeek V4 Flash</div>
+    <div class="brand">Hefestos</div>
+    <div class="nav-item active" data-tab="chat">Chat</div>
+    <div class="nav-item" data-tab="bots">Bots</div>
+    <div class="status"><span class="dot"></span> <span>online</span></div>
   </nav>
 
   <main>
-    <section class="tab active" id="tab-chat">
-      <div class="chat-header"><span class="dot"></span> Chat com DeepSeek V4 Flash</div>
-      <div class="chat-msgs" id="chat-msgs">
-        <div class="msg bot">
-          <span class="role">Hefestos</span>
-          <div class="bubble">Olá! Sou o Hefestos, assistente de IA. Como posso ajudar?</div>
-        </div>
-      </div>
+    <section class="tab active tab-chat" id="tab-chat">
+      <div class="chat-header"><span class="dot"></span> DeepSeek V4 Flash</div>
+      <div class="chat-msgs" id="chat-msgs"></div>
       <div class="chat-input">
-        <textarea id="chat-input" placeholder="Digite sua mensagem..." rows="1"></textarea>
+        <textarea id="chat-input" placeholder="Envie uma mensagem..." rows="1"></textarea>
         <button class="btn btn-primary" id="chat-send">Enviar</button>
       </div>
     </section>
 
     <section class="tab tab-bots" id="tab-bots">
-      <div class="header"><h2>Gerenciar Bots Discord</h2></div>
+      <h2>Gerenciar Bots Discord</h2>
       <div class="form-card">
-        <h3>🤖 Criar Novo Bot</h3>
+        <h3>Criar Bot</h3>
         <form id="bot-form">
-          <div class="field"><label>Nome</label><input name="name" required placeholder="Ex: Meu Assistente" autocomplete="off" /></div>
-          <div class="field"><label>Token do Bot</label><input name="discord_token" required placeholder="Cole o token do Discord Developer Portal" type="password" autocomplete="off" /></div>
+          <div class="field"><label>Nome</label><input name="name" required placeholder="Ex: Assistente" autocomplete="off" /></div>
+          <div class="field"><label>Token do Discord</label><input name="discord_token" required placeholder="Token do Discord Developer Portal" type="password" autocomplete="off" /></div>
           <button type="submit" class="btn btn-primary btn-full">Criar Bot</button>
         </form>
       </div>
       <div class="form-card">
-        <h3>📋 Bots Ativos</h3>
-        <div id="bot-list"><div class="empty-state"><span class="ico">🤖</span>Nenhum bot ainda</div></div>
+        <h3>Bots Ativos</h3>
+        <div id="bot-list"><div class="empty-state">Nenhum bot configurado</div></div>
       </div>
     </section>
   </main>
@@ -200,13 +153,9 @@
 
   <script>
     const $ = id => document.getElementById(id);
-    let chatSessionId = null;
-    let chatSending = false;
+    let chatSessionId = null, chatSending = false;
 
-    function toast(msg) {
-      const t = $('toast'); t.textContent = msg; t.style.display = 'block';
-      setTimeout(() => t.style.display = 'none', 2500);
-    }
+    function toast(msg) { const t=$('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2500); }
     function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
     document.querySelectorAll('.nav-item').forEach(item => {
@@ -218,7 +167,7 @@
       };
     });
 
-    async function chatApi(method, path, body) {
+    async function api(method, path, body) {
       const opts = { method, headers: {} };
       if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
       const res = await fetch(path, opts);
@@ -229,8 +178,9 @@
     }
 
     async function initChat() {
-      const session = await chatApi('POST', '/session', { title: 'Chat Admin' });
-      chatSessionId = session.id;
+      if (chatSessionId) return;
+      const s = await api('POST', '/session', { title: 'Admin Chat' });
+      chatSessionId = s.id;
     }
 
     async function sendChat() {
@@ -239,50 +189,40 @@
       const text = input.value.trim();
       if (!text) return;
 
-      chatSending = true;
-      input.value = '';
-      $('chat-send').disabled = true;
-
+      chatSending = true; input.value = ''; $('chat-send').disabled = true;
       const msgs = $('chat-msgs');
-      const userMsg = document.createElement('div');
-      userMsg.className = 'msg user';
-      userMsg.innerHTML = `<span class="role">Você</span><div class="bubble">${esc(text)}</div>`;
-      msgs.appendChild(userMsg);
+
+      const userDiv = document.createElement('div');
+      userDiv.className = 'msg user';
+      userDiv.innerHTML = `<span class="role">Voce</span><div class="bubble">${esc(text)}</div>`;
+      msgs.appendChild(userDiv);
 
       const botDiv = document.createElement('div');
       botDiv.className = 'msg bot';
-      botDiv.innerHTML = '<span class="role">Hefestos</span><div class="bubble loading">Pensando...</div>';
+      botDiv.innerHTML = '<span class="role">Hefestos</span><div class="bubble loading">Processando...</div>';
       msgs.appendChild(botDiv);
       msgs.scrollTop = msgs.scrollHeight;
 
       try {
-        if (!chatSessionId) await initChat();
-        const response = await chatApi('POST', `/session/${chatSessionId}/message`, { parts: [{ type: 'text', text }] });
-        const reply = (response?.parts || []).filter(p => p.type === 'text').map(p => p.text).join('');
+        await initChat();
+        const resp = await api('POST', `/session/${chatSessionId}/message`, { parts: [{ type: 'text', text }] });
+        const reply = (resp?.parts || []).filter(p => p.type === 'text').map(p => p.text).join('');
         botDiv.innerHTML = `<span class="role">Hefestos</span><div class="bubble">${esc(reply || 'Sem resposta.')}</div>`;
       } catch (e) {
-        botDiv.innerHTML = `<span class="role">Hefestos</span><div class="bubble" style="color:#ff6b6b">Erro: ${esc(e.message)}</div>`;
+        botDiv.innerHTML = `<span class="role">Hefestos</span><div class="bubble" style="color:#f87171">${esc(e.message)}</div>`;
       }
-
-      chatSending = false;
-      $('chat-send').disabled = false;
-      input.focus();
-      msgs.scrollTop = msgs.scrollHeight;
+      chatSending = false; $('chat-send').disabled = false;
+      input.focus(); msgs.scrollTop = msgs.scrollHeight;
     }
 
     $('chat-send').onclick = sendChat;
-    $('chat-input').onkeydown = e => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
-    };
+    $('chat-input').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } };
 
     async function loadBots() {
       const res = await fetch('/admin/api/bots');
       const bots = await res.json();
       const list = $('bot-list');
-      if (!bots.length) {
-        list.innerHTML = '<div class="empty-state"><span class="ico">🤖</span>Nenhum bot ainda</div>';
-        return;
-      }
+      if (!bots.length) { list.innerHTML = '<div class="empty-state">Nenhum bot configurado</div>'; return; }
       list.innerHTML = bots.map(b => `
         <div class="bot-row">
           <div class="info">
@@ -290,7 +230,7 @@
             <div class="tag">ID: ${b.id}</div>
           </div>
           <div class="actions">
-            ${b.invite ? `<button class="btn btn-sm btn-primary" onclick="window.open('${esc(b.invite)}','_blank')">+ Add</button>` : ''}
+            ${b.invite ? `<button class="btn btn-sm btn-primary" onclick="window.open('${esc(b.invite)}','_blank')">Add ao Discord</button>` : ''}
             <button class="btn btn-sm btn-ghost" onclick='editBot(${b.id},"${esc(b.name)}","${esc(b.discord_token)}")'>Editar</button>
             <button class="btn btn-sm btn-danger" onclick="delBot(${b.id})">Apagar</button>
           </div>
@@ -313,24 +253,23 @@
 
     $('bot-form').onsubmit = async e => {
       e.preventDefault();
-      const data = Object.fromEntries(new FormData(e.target));
+      const d = Object.fromEntries(new FormData(e.target));
       const btn = e.target.querySelector('button');
       btn.disabled = true; btn.textContent = 'Criando...';
-      await fetch('/admin/api/bots', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      await fetch('/admin/api/bots', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(d) });
       btn.disabled = false; btn.textContent = 'Criar Bot';
-      toast('Bot criado e online!'); e.target.reset(); loadBots();
+      toast('Bot criado e online'); e.target.reset(); loadBots();
     };
 
     $('edit-form').onsubmit = async e => {
       e.preventDefault();
-      const data = Object.fromEntries(new FormData(e.target));
-      const id = data.id; delete data.id;
-      await fetch(`/admin/api/bots/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-      closeModal(); toast('Bot atualizado!'); loadBots();
+      const d = Object.fromEntries(new FormData(e.target));
+      const id = d.id; delete d.id;
+      await fetch(`/admin/api/bots/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(d) });
+      closeModal(); toast('Bot atualizado'); loadBots();
     };
 
-    initChat();
-    loadBots();
+    initChat(); loadBots();
   </script>
 </body>
 </html>
