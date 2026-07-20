@@ -39,6 +39,7 @@ const server = http.createServer(async (req, res) => {
     const bots = await db.listBots();
     const safe = bots.map(b => ({
       id: b.id, name: b.name, created_at: b.created_at,
+      online: discord.isOnline(b.id),
       invite: inviteUrl(b.discord_token),
       discord_token: b.discord_token,
     }));
@@ -116,5 +117,5 @@ function readBody(req) { return new Promise(r => { let b = ''; req.on('data', c 
 server.listen(PORT, async () => {
   console.log(`Hefestos :${PORT} -> opencode :${OCPORT}`);
   await db.migrate();
-  discord.loadAll();
+  await discord.loadAll();
 });
