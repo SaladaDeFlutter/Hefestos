@@ -8,6 +8,19 @@ const PORT = process.env.PORT || 10000;
 const OCPORT = 10001;
 const ADMIN = fs.readFileSync(path.join(__dirname, 'public', 'admin.html'), 'utf-8');
 
+function clientIdFromToken(token) {
+  try {
+    const part = token.split('.')[0];
+    const id = Buffer.from(part, 'base64').toString();
+    return id;
+  } catch { return null; }
+}
+
+function inviteUrl(token) {
+  const cid = clientIdFromToken(token);
+  return cid ? `https://discord.com/oauth2/authorize?client_id=${cid}&permissions=2147551232&scope=bot` : null;
+}
+
 const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, `http://${req.headers.host}`);
 
@@ -15,15 +28,30 @@ const server = http.createServer(async (req, res) => {
   if (u.pathname === '/admin/api/health') return json(res, { ok: true });
 
   if (u.pathname === '/admin/api/bots' && req.method === 'GET') {
-    return json(res, await db.listBots());
+    const bots = await db.listBots();
+    const safe = bots.map(b => ({
+      id: b.id, name: b.name, created_at: b.created_at,
+      invite: inviteUrl(b.discord_token),
+      discord_token: b.discord_token,
+    }));
+    return json(res, safe);
   }
+
+  if (u.pathname.startsWith('/admin/api/bots/') && u.pathname.endsWith('/invite')) {
+    const botId = parseInt(u.pathname.split('/').pop());
+    const bot = await db.getBot(botId);
+    if (!bot) return json(res, { error: 'Not found' }, 404);
+    return json(res, { url: inviteUrl(bot.discord_token) });
+  }
+
   if (u.pathname === '/admin/api/bots' && req.method === 'POST') {
     const { name, discord_token } = JSON.parse(await readBody(req));
-    if (!name || !discord_token) return json(res, 400, { error: 'name e discord_token obrigatórios' });
+    if (!name || !discord_token) return json(res, { error: 'name e discord_token obrigatórios' }, 400);
     const bot = await db.createBot(name, discord_token);
     discord.start(bot);
     return json(res, bot);
   }
+
   if (u.pathname.startsWith('/admin/api/bots/')) {
     const id = parseInt(u.pathname.split('/').pop());
     if (req.method === 'PUT') {
@@ -59,17 +87,9 @@ function proxy(req, res) {
   req.pipe(p);
 }
 
-function html(res, body) {
-  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-  res.end(body);
-}
-function json(res, data, code = 200) {
-  res.writeHead(code, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(data));
-}
-function readBody(req) {
-  return new Promise(r => { let b = ''; req.on('data', c => b += c); req.on('end', () => r(b)); });
-}
+function html(res, body) { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); res.end(body); }
+function json(res, data, code = 200) { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(data)); }
+function readBody(req) { return new Promise(r => { let b = ''; req.on('data', c => b += c); req.on('end', () => r(b)); }); }
 
 server.listen(PORT, async () => {
   console.log(`Hefestos :${PORT} → opencode :${OCPORT}`);

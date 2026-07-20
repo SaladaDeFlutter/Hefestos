@@ -170,6 +170,7 @@
             <div class="bot-tag">ID: ${b.id}</div>
           </div>
           <div class="bot-actions">
+            ${b.invite ? `<button class="btn btn-sm btn-primary" onclick="window.open('${esc(b.invite)}','_blank')" title="Adicionar ao Discord">+ Add</button>` : ''}
             <button class="btn btn-sm btn-ghost" onclick='editBot(${b.id},"${esc(b.name)}","${esc(b.discord_token)}")'>Editar</button>
             <button class="btn btn-sm" style="background:#331111;color:#ff6b6b" onclick="delBot(${b.id})">Apagar</button>
           </div>
