@@ -2,149 +2,303 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hefestos Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Hefestos</title>
   <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface2: #181825;
+      --border: #1e1e2e;
+      --text: #cdd6f4;
+      --muted: #6c7086;
+      --accent: #e94560;
+      --accent2: #c53050;
+      --green: #4ecca3;
+      --radius: 10px;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #1a1a2e; color: #eee; padding: 24px; max-width: 800px; margin: 0 auto; }
-    h1 { color: #e94560; margin-bottom: 24px; }
-    .card { background: #16213e; border: 1px solid #0f3460; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-    .card h3 { margin-bottom: 12px; }
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 13px; color: #aaa; margin-bottom: 4px; }
-    .form-group input, .form-group select { width: 100%; padding: 8px 12px; background: #1a1a2e; border: 1px solid #0f3460; color: #eee; border-radius: 6px; font-size: 14px; outline: none; }
-    .form-group input:focus, .form-group select:focus { border-color: #e94560; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100dvh;
+      padding: 16px; max-width: 640px; margin: 0 auto;
+    }
+    header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 20px 0 24px;
+    }
+    header .logo { font-size: 28px; }
+    header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+    header span { color: var(--muted); font-size: 13px; }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+    }
+    .card h3 {
+      font-size: 15px; font-weight: 600; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card h3 .ico { font-size: 18px; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; font-size: 12px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    .field input, .field select {
+      width: 100%; padding: 10px 14px; background: var(--surface2);
+      border: 1px solid var(--border); color: var(--text);
+      border-radius: 8px; font-size: 14px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .field input:focus, .field select:focus { border-color: var(--accent); }
+    .field input::placeholder { color: var(--muted); }
+
     .row { display: flex; gap: 12px; }
-    .row .form-group { flex: 1; }
-    button { background: #e94560; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; }
-    button:hover { background: #d63851; }
-    .config-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #0f3460; font-size: 14px; }
-    .config-item:last-child { border-bottom: none; }
-    .config-item .delete { background: none; border: none; color: #e94560; cursor: pointer; font-size: 18px; padding: 0 4px; }
-    .provider-tag { background: #0f3460; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
-    .empty { color: #555; text-align: center; padding: 24px; }
-    .toast { position: fixed; bottom: 24px; right: 24px; background: #e94560; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 14px; display: none; }
+    .row .field { flex: 1; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 20px; border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent2); }
+    .btn-cancel { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+
+    .bot-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0; border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .bot-item:last-child { border-bottom: none; }
+    .bot-info { flex: 1; min-width: 0; }
+    .bot-name {
+      font-weight: 600; font-size: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .bot-status {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+    }
+    .bot-meta {
+      font-size: 12px; color: var(--muted); margin-top: 2px;
+      display: flex; gap: 8px; align-items: center;
+    }
+    .tag {
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 2px 8px; border-radius: 4px; font-size: 11px;
+    }
+    .bot-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .empty { text-align: center; color: var(--muted); padding: 32px 0; font-size: 14px; }
+    .empty .ico { font-size: 32px; margin-bottom: 8px; display: block; }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #fff; padding: 10px 20px;
+      border-radius: 8px; font-size: 13px; font-weight: 500;
+      display: none; z-index: 99; box-shadow: 0 4px 20px rgba(233,69,96,0.3);
+    }
+
+    .status-bar {
+      padding: 10px 16px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      font-size: 13px; color: var(--muted); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .dot.on { background: var(--green); }
+
+    #edit-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); z-index: 50;
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    #edit-modal.show { display: flex; }
+    #edit-modal .card { width: 100%; max-width: 500px; }
+
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
   </style>
 </head>
 <body>
-  <h1>Hefestos Admin</h1>
+  <header>
+    <span class="logo">🔨</span>
+    <div>
+      <h1>Hefestos</h1>
+      <span>Gerenciador de bots Discord com IA</span>
+    </div>
+  </header>
 
-  <div class="card">
-    <h3>Adicionar Servidor Discord</h3>
-    <form id="config-form">
-      <div class="row">
-        <div class="form-group">
-          <label>ID do Servidor (Guild ID)</label>
-          <input name="guild_id" required placeholder="Ex: 123456789012345678" />
-        </div>
-        <div class="form-group">
-          <label>Nome do Servidor</label>
-          <input name="guild_name" placeholder="Meu Servidor" />
-        </div>
+  <div class="status-bar">
+    <span class="dot on"></span> API online
+    <span style="margin-left:auto" id="bot-count">0 bots</span>
+  </div>
+
+  <div class="card" id="form-card">
+    <h3><span class="ico">🤖</span> Novo Bot</h3>
+    <form id="bot-form">
+      <div class="field">
+        <label>Nome do bot</label>
+        <input name="name" required placeholder="Ex: Meu Assistente" autocomplete="off" />
       </div>
       <div class="row">
-        <div class="form-group">
-          <label>Provider</label>
+        <div class="field">
+          <label>Provedor de IA</label>
           <select name="provider">
             <option value="deepseek">DeepSeek</option>
             <option value="openai">OpenAI</option>
             <option value="anthropic">Anthropic</option>
-            <option value="google">Google (Gemini)</option>
+            <option value="google">Google Gemini</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="field">
           <label>Modelo</label>
-          <input name="model" value="deepseek/deepseek-v4-flash" placeholder="deepseek/deepseek-v4-flash" />
+          <input name="model" value="deepseek/deepseek-v4-flash" placeholder="provider/modelo" />
         </div>
       </div>
-      <div class="form-group">
-        <label>Chave de API (API Key)</label>
-        <input name="api_key" required placeholder="sk-..." type="password" />
+      <div class="field">
+        <label>API Key do provedor</label>
+        <input name="api_key" required placeholder="sk-..." type="password" autocomplete="off" />
       </div>
-      <div class="form-group">
-        <label>Token do Bot Discord</label>
-        <input name="discord_token" placeholder="MTIzNDU2..." type="password" />
+      <div class="field">
+        <label>Token do bot Discord</label>
+        <input name="discord_token" required placeholder="Cole o token do Discord Developer Portal" type="password" autocomplete="off" />
       </div>
-      <button type="submit">Salvar Configuracao</button>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+        Criar Bot
+      </button>
     </form>
   </div>
 
   <div class="card">
-    <h3>Servidores Configurados</h3>
-    <div id="config-list"><div class="empty">Nenhum servidor configurado</div></div>
+    <h3><span class="ico">📋</span> Seus Bots</h3>
+    <div id="bot-list"><div class="empty"><span class="ico">🤖</span>Nenhum bot ainda</div></div>
   </div>
 
-  <div class="card">
-    <h3>Status</h3>
-    <p style="font-size:14px;color:#aaa;">API: <span id="api-status">verificando...</span></p>
+  <div id="edit-modal">
+    <div class="card">
+      <h3>Editar Bot</h3>
+      <form id="edit-form">
+        <input type="hidden" name="id" />
+        <div class="field"><label>Nome</label><input name="name" required /></div>
+        <div class="row">
+          <div class="field"><label>Provedor</label><select name="provider"><option value="deepseek">DeepSeek</option><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option><option value="google">Google Gemini</option></select></div>
+          <div class="field"><label>Modelo</label><input name="model" /></div>
+        </div>
+        <div class="field"><label>API Key</label><input name="api_key" required type="password" /></div>
+        <div class="field"><label>Token Discord</label><input name="discord_token" required type="password" /></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <div id="toast" class="toast"></div>
 
   <script>
-    const form = document.getElementById('config-form');
-    const list = document.getElementById('config-list');
+    const $ = id => document.getElementById(id);
+    let editingId = null;
 
     function toast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.style.display = 'block';
-      setTimeout(() => t.style.display = 'none', 3000);
+      const t = $('toast');
+      t.textContent = msg; t.style.display = 'block';
+      setTimeout(() => t.style.display = 'none', 2500);
     }
 
-    async function loadConfigs() {
-      try {
-        const res = await fetch('/admin/api/configs');
-        const configs = await res.json();
-        if (configs.length === 0) {
-          list.innerHTML = '<div class="empty">Nenhum servidor configurado</div>';
-        } else {
-          list.innerHTML = configs.map(c => `
-            <div class="config-item">
-              <div>
-                <strong>${c.guild_name || c.guild_id}</strong>
-                <span class="provider-tag">${c.provider}</span>
-                <span style="color:#aaa;font-size:12px;">${c.model}</span>
-              </div>
-              <button class="delete" onclick="remove('${c.guild_id}')">&times;</button>
-            </div>
-          `).join('');
-        }
-      } catch (e) {
-        list.innerHTML = '<div class="empty">Erro ao carregar</div>';
+    async function loadBots() {
+      const res = await fetch('/admin/api/bots');
+      const bots = await res.json();
+      $('bot-count').textContent = bots.length + ' bot' + (bots.length !== 1 ? 's' : '');
+      const list = $('bot-list');
+      if (!bots.length) {
+        list.innerHTML = '<div class="empty"><span class="ico">🤖</span>Nenhum bot ainda</div>';
+        return;
       }
+      list.innerHTML = bots.map(b => `
+        <div class="bot-item">
+          <div class="bot-info">
+            <div class="bot-name">
+              <span class="bot-status"></span> ${esc(b.name)}
+            </div>
+            <div class="bot-meta">
+              <span class="tag">${b.provider}</span> ${b.model}
+            </div>
+          </div>
+          <div class="bot-actions">
+            <button class="btn btn-sm btn-cancel" onclick="editBot(${b.id}, '${esc(b.name)}', '${b.provider}', '${esc(b.model)}', '${esc(b.api_key)}', '${esc(b.discord_token)}')">Editar</button>
+            <button class="btn btn-sm" style="background:#441111;color:#ff6b6b" onclick="delBot(${b.id})">Apagar</button>
+          </div>
+        </div>
+      `).join('');
     }
 
-    async function remove(guildId) {
-      if (!confirm('Remover configuracao deste servidor?')) return;
-      await fetch(`/admin/api/configs/${guildId}`, { method: 'DELETE' });
-      toast('Servidor removido');
-      loadConfigs();
+    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+    async function delBot(id) {
+      if (!confirm('Apagar este bot? A ação é irreversível.')) return;
+      await fetch(`/admin/api/bots/${id}`, { method: 'DELETE' });
+      toast('Bot removido');
+      loadBots();
     }
 
-    form.onsubmit = async (e) => {
+    function editBot(id, name, provider, model, apiKey, token) {
+      editingId = id;
+      const f = $('edit-form');
+      f.id.value = id;
+      f.name.value = name;
+      f.provider.value = provider;
+      f.model.value = model;
+      f.api_key.value = apiKey;
+      f.discord_token.value = token;
+      $('edit-modal').classList.add('show');
+    }
+
+    function closeModal() {
+      $('edit-modal').classList.remove('show');
+      editingId = null;
+    }
+
+    $('edit-modal').addEventListener('click', e => { if (e.target === $('edit-modal')) closeModal(); });
+
+    $('bot-form').onsubmit = async e => {
       e.preventDefault();
-      const data = Object.fromEntries(new FormData(form));
+      const data = Object.fromEntries(new FormData(e.target));
       if (data.provider === 'deepseek' && !data.model) data.model = 'deepseek/deepseek-v4-flash';
-      await fetch('/admin/api/configs', {
+      const btn = e.target.querySelector('button');
+      btn.disabled = true; btn.textContent = 'Criando...';
+      await fetch('/admin/api/bots', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      toast('Configuracao salva!');
-      form.reset();
-      loadConfigs();
+      btn.disabled = false; btn.textContent = 'Criar Bot';
+      toast('Bot criado e online!');
+      e.target.reset();
+      loadBots();
     };
 
-    fetch('/admin/api/health').then(r => r.json()).then(d => {
-      document.getElementById('api-status').textContent = 'online';
-      document.getElementById('api-status').style.color = '#4ecca3';
-    }).catch(() => {
-      document.getElementById('api-status').textContent = 'offline';
-      document.getElementById('api-status').style.color = '#e94560';
-    });
+    $('edit-form').onsubmit = async e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target));
+      const id = data.id; delete data.id;
+      await fetch(`/admin/api/bots/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      closeModal();
+      toast('Bot atualizado!');
+      loadBots();
+    };
 
-    loadConfigs();
+    loadBots();
   </script>
 </body>
 </html>
