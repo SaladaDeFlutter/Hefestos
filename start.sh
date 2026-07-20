@@ -5,6 +5,9 @@ if [ -f .env ]; then
   set +a
 fi
 
+mkdir -p "$HOME/.local/share/opencode"
+printf '{"deepseek":{"type":"api","key":"%s"}}\n' "$DEEPSEEK_API_KEY" > "$HOME/.local/share/opencode/auth.json"
+
 echo "[Hefestos] Killing old processes on port 10001..."
 fuser -k 10001/tcp 2>/dev/null || true
 sleep 1
@@ -23,5 +26,5 @@ done
 
 PORT="${PORT:-4096}"
 echo "[Hefestos] Server listening on http://localhost:${PORT}"
-echo "[Hefestos] Admin panel: http://localhost:${PORT}/admin"
+echo "[Hefestos] Admin: http://localhost:${PORT}/admin"
 exec node server.js
